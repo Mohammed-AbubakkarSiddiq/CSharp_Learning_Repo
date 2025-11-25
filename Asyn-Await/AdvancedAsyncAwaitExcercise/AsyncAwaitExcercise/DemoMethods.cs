@@ -13,8 +13,8 @@ namespace AsyncAwaitExcercise
         {
             List<string> filePaths = new List<string>();
 
-            filePaths.Add(@"C:\Users\siddi\Documents\UpSkill\C#\CSharp_Learning_Repo\Asyn-Await\AsyncAwaitExcercise\AsyncAwaitExcercise\LoremIpsum_Paragraph_1.txt");
-            filePaths.Add(@"C:\Users\siddi\Documents\UpSkill\C#\CSharp_Learning_Repo\Asyn-Await\AsyncAwaitExcercise\AsyncAwaitExcercise\LoremIpsum_Paragraph_2.txt");
+            filePaths.Add(@"..\..\..\LoremIpsum_Paragraph_1.txt");
+            filePaths.Add(@"..\..\..\LoremIpsum_Paragraph_2.txt");
 
             return filePaths;
         }

@@ -31,7 +31,8 @@ namespace AsyncAwaitExcercise
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            RunReadSync();
+            var result = DemoMethods.RunReadSync();
+            ReportResult(result);
             stopwatch.Stop();
             resultsWindow.Text += $"Total Ellapsed Time: {stopwatch.ElapsedMilliseconds}";
         }
@@ -40,7 +41,8 @@ namespace AsyncAwaitExcercise
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            await RunReadAsync();
+            var result = await DemoMethods.RunReadAsync();
+            ReportResult(result);
             stopwatch.Stop();
             resultsWindow.Text += $"Total Ellapsed Time: {stopwatch.ElapsedMilliseconds}";
         }
@@ -49,14 +51,24 @@ namespace AsyncAwaitExcercise
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            await RunReadParallelAsync();
+            var result = await DemoMethods.RunReadParallelAsync();
+            ReportResult(result);
             stopwatch.Stop();
             resultsWindow.Text += $"Total Ellapsed Time: {stopwatch.ElapsedMilliseconds}";
         }
 
-        private void ReportResult(FileDataModel result)
+        private void ReportResult(List<FileDataModel> results)
         {
-            resultsWindow.Text += $"File Name: {result.FileName} File Data Length: {result.FileData.Length} {Environment.NewLine}";
+            resultsWindow.Text = "";
+            foreach (FileDataModel result in results)
+            {
+                resultsWindow.Text += $"File Name: {result.FileName} File Data Length: {result.FileData.Length} {Environment.NewLine}";
+            }
+        }
+
+        private void cancelOperation_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
