@@ -45,6 +45,7 @@ namespace WPFUserInterface
         {
             Progress<ProgressReportModel> progress = new Progress<ProgressReportModel>();
             progress.ProgressChanged += ReportProgress;
+            cts = new CancellationTokenSource();
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
