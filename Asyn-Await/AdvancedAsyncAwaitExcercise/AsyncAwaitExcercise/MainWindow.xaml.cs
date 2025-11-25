@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using System.Diagnostics;
+using System.Threading;
 
 namespace AsyncAwaitExcercise
 {
@@ -22,6 +23,7 @@ namespace AsyncAwaitExcercise
     /// </summary>
     public partial class MainWindow : Window
     {
+        CancellationTokenSource cts = new CancellationTokenSource();
         public MainWindow()
         {
             InitializeComponent();
@@ -31,7 +33,7 @@ namespace AsyncAwaitExcercise
         {
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            var result = DemoMethods.RunReadSync();
+            var result = DemoMethods.RunReadParallelSync();
             ReportResult(result);
             stopwatch.Stop();
             resultsWindow.Text += $"Total Ellapsed Time: {stopwatch.ElapsedMilliseconds}";
@@ -39,22 +41,40 @@ namespace AsyncAwaitExcercise
 
         private async void executeAsync_Click(object sender, RoutedEventArgs e)
         {
+            Progress<ProgressModel> progress = new Progress<ProgressModel>();
+            progress.ProgressChanged += ReportProgress;
+            cts = new CancellationTokenSource();
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            var result = await DemoMethods.RunReadAsync();
-            ReportResult(result);
+            try
+            {
+                var result = await DemoMethods.RunReadAsync(progress, cts.Token);
+                ReportResult(result);
+            }
+            catch (OperationCanceledException)
+            {
+                resultsWindow.Text += $"{Environment.NewLine}Async operation was cancelled.{Environment.NewLine}";
+            }
             stopwatch.Stop();
             resultsWindow.Text += $"Total Ellapsed Time: {stopwatch.ElapsedMilliseconds}";
         }
 
         private async void executeParallelAsync_Click(object sender, RoutedEventArgs e)
         {
+            Progress<ProgressModel> progress = new Progress<ProgressModel>();
+            progress.ProgressChanged += ReportProgress;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            var result = await DemoMethods.RunReadParallelAsync();
+            var result = await DemoMethods.RunReadParallelAsyncV2(progress);
             ReportResult(result);
             stopwatch.Stop();
             resultsWindow.Text += $"Total Ellapsed Time: {stopwatch.ElapsedMilliseconds}";
+        }
+
+        private void ReportProgress(object sender, ProgressModel e)
+        {
+            dashboardProgress.Value = e.PercentageRead;
+            ReportResult(e.ReadCompletedFiles);
         }
 
         private void ReportResult(List<FileDataModel> results)
@@ -68,7 +88,7 @@ namespace AsyncAwaitExcercise
 
         private void cancelOperation_Click(object sender, RoutedEventArgs e)
         {
-
+            cts.Cancel();
         }
     }
 }
